@@ -22,6 +22,7 @@ Imports:
     igraph,
     ggraph,
     stopwords,
+    qdapRegex
 Suggests:
 SystemRequirements: Optional Python Spacy Backend for Part of Speech Tagging
 NeedsCompilation: no

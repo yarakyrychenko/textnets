@@ -13,10 +13,12 @@
 # describes the prevalence of each word within the document). Optionally, the function a) parses noun compounds;
 # b) removes numeric tokens; c) removes stop words; and b) returns nouns and proper nouns only.
 
+
+# Yara added custom stopwords and remove_URLs
 PrepText <- function(textdata, groupvar, textvar, node_type = c("groups","words"), 
                     tokenizer = c("words", "tweets"), pos = c("all", "nouns"),
-                    language = "english", remove_stop_words = FALSE, 
-                    remove_numbers = NULL, compound_nouns = FALSE,
+                    language = "english", stopwords = NULL,
+                    remove_numbers = NULL, remove_URLs = FALSE, compound_nouns = FALSE,
                     udmodel_lang = NULL,
                     ...) {
   
@@ -30,6 +32,15 @@ PrepText <- function(textdata, groupvar, textvar, node_type = c("groups","words"
       textdata[[textvar]]<-gsub("\\b\\d+\\b", "",textdata[[textvar]])
     }
   }
+  
+  # remove URLs
+  if (remove_URLs) {
+    textdata[[textvar]] <- rm_url(textdata[[textvar]])
+    textdata[[textvar]] <- rm_twitter_url(textdata[[textvar]]) 
+  }
+  
+  text <- rm_url(text)
+  text <- rm_twitter_url(text) 
   
   if(is.null(udmodel_lang)){
   # udpipe setup
@@ -102,9 +113,9 @@ PrepText <- function(textdata, groupvar, textvar, node_type = c("groups","words"
   }
   
   # remove stopwords
-  if (remove_stop_words) {
+  if (!is.null(stopwords)) {
     textdata <- {{textdata}} %>% 
-      anti_join(get_stopwords(language = language), by = c("lemma" = "word"))
+      anti_join(stopwords, by = c("lemma" = "word"))
   }
   
   # subset to nouns and proper nouns (if desired)
