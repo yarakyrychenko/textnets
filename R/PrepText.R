@@ -35,12 +35,9 @@ PrepText <- function(textdata, groupvar, textvar, node_type = c("groups","words"
   
   # remove URLs
   if (remove_URLs) {
-    textdata[[textvar]] <- rm_url(textdata[[textvar]])
-    textdata[[textvar]] <- rm_twitter_url(textdata[[textvar]]) 
+    textdata[[textvar]] <- qdapRegex::rm_url(textdata[[textvar]])
+    textdata[[textvar]] <- qdapRegex::rm_twitter_url(textdata[[textvar]]) 
   }
-  
-  text <- rm_url(text)
-  text <- rm_twitter_url(text) 
   
   if(is.null(udmodel_lang)){
   # udpipe setup
